@@ -7,7 +7,7 @@ import { ApiContext } from '../../types/ApiContext';
 @Resolver()
 export class UserResolver {
   @Query(() => User, { nullable: true })
-  public async me(@Ctx() ctx: ApiContext): Promise<User | undefined> {;
+  public async me(@Ctx() ctx: ApiContext): Promise<User | undefined> {
     if (!ctx.req.session || !ctx.req.session.userId) {
       return undefined;
     }
@@ -40,7 +40,6 @@ export class UserResolver {
     if (!valid) {
       return null;
     }
-    console.log(ctx.req.session);
     if (ctx.req.session) {
       ctx.req.session.userId = user.id;
     }

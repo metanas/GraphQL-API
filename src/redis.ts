@@ -1,3 +1,7 @@
-import Redis from "ioredis";
+import Redis from 'ioredis';
 
-export const redis = new Redis(6380);
+export const redis = new Redis();
+
+redis.on('error', error => {
+  console.error(error);
+});
