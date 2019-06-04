@@ -1,5 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, OneToMany } from 'typeorm';
 import { ObjectType, Field, ID } from 'type-graphql';
+import { UserTokens } from './UserTokens';
 
 @ObjectType()
 @Entity()
@@ -27,4 +28,7 @@ export class User extends BaseEntity {
 
   @Column()
   public password: string;
+
+  @OneToMany(() => UserTokens, token => token.user)
+  public tokens: UserTokens[];
 }

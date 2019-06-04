@@ -1,18 +1,19 @@
-import { Arg, Mutation, Query, Resolver, Ctx } from 'type-graphql';
+import { Arg, Mutation, Query, Resolver, Ctx, UseMiddleware } from 'type-graphql';
 import bcrypt from 'bcryptjs';
 import { User } from '../../entity/User';
-import { RegisterInput } from './register/RegisterInput';
+import { RegisterInput } from '../input/RegisterInput';
 import { ApiContext } from '../../types/ApiContext';
+import { Auth } from '../Middleware/Auth';
+import { UserTokens } from '../../entity/UserTokens';
 
 @Resolver()
 export class UserResolver {
+  @UseMiddleware(Auth)
   @Query(() => User, { nullable: true })
   public async me(@Ctx() ctx: ApiContext): Promise<User | undefined> {
-    if (!ctx.req.session || !ctx.req.session.userId) {
-      return undefined;
-    }
+    const userToken = await UserTokens.findOne({ where: { token: ctx.req.session!.userId }, relations: ['user'] });
 
-    return User.findOne(ctx.req.session.userId);
+    return userToken ? userToken.user : undefined;
   }
 
   @Mutation(() => User)
@@ -40,8 +41,17 @@ export class UserResolver {
     if (!valid) {
       return null;
     }
+
+    const token = await bcrypt.genSalt();
+
+    const userToken = await UserTokens.create({
+      token,
+      create_at: new Date(),
+      user: user,
+    }).save();
+
     if (ctx.req.session) {
-      ctx.req.session.userId = user.id;
+      ctx.req.session.userId = userToken.token;
     }
 
     return user;
