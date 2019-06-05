@@ -1,0 +1,46 @@
+# Use the latest 2.1 version of CircleCI pipeline processing engine, see https://circleci.com/docs/2.0/configuration-reference/
+version: 2.1
+
+jobs:
+  build-job:
+    docker:
+      # specify the version you desire here
+      - image: circleci/node:11.14.0
+        envirenment:
+          - NODE_ENV: test
+          - PORT: 4000
+
+      - image: circleci/postgres:11.3
+        envirenment:
+          - TYPEORM_CONNECTION: postgres
+          - TYPEORM_HOST: localhost"
+          - TYPEORM_USERNAME: ubuntu
+          - TYPEORM_DATABASE: api
+          - TYPEORM_PASSWORD: root
+          - TYPEORM_SYNCHRONIZE: true
+          - TYPEORM_LOGGING: true"
+          - TYPEORM_ENTITIES: src/entity/*.*
+
+      - image: circleci/redis:5.0.3
+        envirenment:
+          - REDIS_SECRET_KEY: vSKNqagjjE1Nu44SVl6KEF1NgtoX6NGY
+
+    steps:
+      - checkout
+
+      - run:
+          name: create DB
+          command: |
+            sudo -u postgres createuser ubuntu
+            sudo -u postgres createdb api
+            sudo -u postgres psql
+            alter user ubuntu with encrypted password root;
+            grant all privileges on database api to ubuntu;
+
+      - run:
+          name: start serve
+          command: yarn start
+
+      - run:
+          name: start lint
+          command: yarn lint

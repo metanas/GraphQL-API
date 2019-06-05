@@ -5,7 +5,8 @@
   "license": "MIT",
   "scripts": {
     "start": "ts-node-dev --respawn src/index.ts",
-    "lint": "tsc --noEmit && eslint '*/**/*.{ts,js}' --quiet --fix"
+    "lint:fix": "tsc --noEmit && eslint '*/**/*.{ts,js}' --quiet --fix",
+    "lint": "tsc --noEmit && eslint '*/**/*.{ts,js}'"
   },
   "dependencies": {
     "apollo-server-express": "^2.6.1",
