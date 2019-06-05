@@ -5,6 +5,7 @@ import { RegisterInput } from '../input/RegisterInput';
 import { ApiContext } from '../../types/ApiContext';
 import { Auth } from '../Middleware/Auth';
 import { UserTokens } from '../../entity/UserTokens';
+import { v4 } from 'uuid';
 
 @Resolver()
 export class UserResolver {
@@ -42,7 +43,7 @@ export class UserResolver {
       return null;
     }
 
-    const token = await bcrypt.genSalt();
+    const token = v4();
 
     const userToken = await UserTokens.create({
       token,
