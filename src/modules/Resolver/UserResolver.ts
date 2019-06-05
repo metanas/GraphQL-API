@@ -1,4 +1,4 @@
-import { Arg, Mutation, Query, Resolver, Ctx, UseMiddleware } from 'type-graphql';
+import { Arg, Ctx, Mutation, Query, Resolver, UseMiddleware } from 'type-graphql';
 import bcrypt from 'bcryptjs';
 import { User } from '../../entity/User';
 import { RegisterInput } from '../input/RegisterInput';
@@ -55,5 +55,26 @@ export class UserResolver {
     }
 
     return user;
+  }
+
+  @UseMiddleware(Auth)
+  @Mutation(() => Boolean)
+  public async logout(@Ctx() ctx: ApiContext): Promise<boolean> {
+    console.log(ctx);
+    const logged = await UserTokens.delete({ token: ctx.req.session!.userId });
+
+    if (!logged) {
+      throw new Error('Error');
+    }
+    return new Promise<boolean>((res, rej) => {
+      ctx.req.session!.destroy(err => {
+        if (err) {
+          return rej(false);
+        }
+
+        ctx.res.clearCookie('uid');
+        return res(true);
+      });
+    });
   }
 }

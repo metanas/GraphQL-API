@@ -17,7 +17,7 @@ const main = async () => {
 
   const schema = await buildSchema({ resolvers: [UserResolver] });
 
-  const apolloServer = new ApolloServer({ schema, context: ({ req }) => ({ req }) });
+  const apolloServer = new ApolloServer({ schema, context: ({ req, res }) => ({ req, res }) });
 
   const app = Express();
 
