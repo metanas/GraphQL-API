@@ -47,7 +47,7 @@ export class UserResolver {
 
     const userToken = await UserTokens.create({
       token,
-      create_at: new Date(),
+      createAt: new Date(),
       user: user,
     }).save();
 

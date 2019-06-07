@@ -6,41 +6,41 @@ jobs:
     docker:
       # specify the version you desire here
       - image: circleci/node:11.14.0
-        envirenment:
+        environment:
           - NODE_ENV: test
           - PORT: 4000
-
-      - image: circleci/postgres:11.3
-        envirenment:
-          - TYPEORM_CONNECTION: postgres
-          - TYPEORM_HOST: localhost"
-          - TYPEORM_USERNAME: ubuntu
-          - TYPEORM_DATABASE: api
-          - TYPEORM_PASSWORD: root
-          - TYPEORM_SYNCHRONIZE: true
-          - TYPEORM_LOGGING: true"
-          - TYPEORM_ENTITIES: src/entity/*.*
-
-      - image: circleci/redis:5.0.3
-        envirenment:
-          - REDIS_SECRET_KEY: vSKNqagjjE1Nu44SVl6KEF1NgtoX6NGY
 
     steps:
       - checkout
 
+      - restore_cache:
+          keys:
+            - Yarndependencies-{{ checksum "yarn.lock" }}
+            - Yarndependencies-
       - run:
-          name: create DB
-          command: |
-            sudo -u postgres createuser ubuntu
-            sudo -u postgres createdb api
-            sudo -u postgres psql
-            alter user ubuntu with encrypted password root;
-            grant all privileges on database api to ubuntu;
+          name: Install Dependencies
+          command: yarn install
+
+      - save_cache:
+          paths:
+            - /home/circleci/app/api/node_modules
+          key: Yarndependencies-{{ checksum "yarn.lock" }}
+
 
       - run:
-          name: start serve
-          command: yarn start
+          name: Install Postgres
+          command: sudo apt install -y postgresql-client || true
+
+      - run:
+          name: Install Redis
+          command: sudo apt-get install redis-server || true
 
       - run:
           name: start lint
           command: yarn lint
+
+workflows:
+  version: 2.1
+  build:
+    jobs:
+      - build-job

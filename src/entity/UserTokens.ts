@@ -16,9 +16,9 @@ export class UserTokens extends BaseEntity {
   @JoinTable()
   public user: User;
 
-  @Column()
-  public create_at: Date;
+  @Column({ name: 'create_at' })
+  public createAt: Date;
 
-  @Column({ nullable: true })
-  public update_at: Date;
+  @Column({ name: 'update_at', nullable: true })
+  public updateAt: Date;
 }
