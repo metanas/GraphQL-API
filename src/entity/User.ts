@@ -1,6 +1,7 @@
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, OneToMany, ManyToOne, JoinTable } from 'typeorm';
 import { ObjectType, Field, ID } from 'type-graphql';
 import { UserTokens } from './UserTokens';
+import { UserGroups } from './UserGroups';
 
 @ObjectType()
 @Entity()
@@ -31,4 +32,8 @@ export class User extends BaseEntity {
 
   @OneToMany(() => UserTokens, token => token.user)
   public tokens: UserTokens[];
+
+  @ManyToOne(() => UserGroups, permission => permission.id)
+  @JoinTable()
+  public permissions: UserGroups;
 }
