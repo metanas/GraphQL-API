@@ -61,7 +61,6 @@ export class UserResolver {
   @UseMiddleware(Auth)
   @Mutation(() => Boolean)
   public async logout(@Ctx() ctx: ApiContext): Promise<boolean> {
-    console.log(ctx);
     const logged = await UserTokens.delete({ token: ctx.req.session!.userId });
 
     if (!logged) {
@@ -77,5 +76,10 @@ export class UserResolver {
         return res(true);
       });
     });
+  }
+
+  @Query(() => [User])
+  public async getUsers(): Promise<User[]> {
+    return User.find()
   }
 }
