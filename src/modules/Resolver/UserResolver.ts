@@ -80,6 +80,6 @@ export class UserResolver {
 
   @Query(() => [User])
   public async getUsers(): Promise<User[]> {
-    return User.find()
+    return User.find();
   }
 }
