@@ -1,21 +1,20 @@
 import 'reflect-metadata';
 import { ApolloServer } from 'apollo-server-express';
 import Express from 'express';
-import { buildSchema } from 'type-graphql';
 import { createConnection } from 'typeorm';
-import { UserResolver } from './modules/Resolver/UserResolver';
 import session from 'express-session';
 import connectRedis from 'connect-redis';
 import cors from 'cors';
 import { redis } from './redis';
 import dotenv from 'dotenv';
+import { createSchema } from './utils/createSchema';
 
 const main = async () => {
   dotenv.config();
 
   await createConnection();
 
-  const schema = await buildSchema({ resolvers: [UserResolver] });
+  const schema = await createSchema();
 
   const apolloServer = new ApolloServer({ schema, context: ({ req, res }) => ({ req, res }) });
 

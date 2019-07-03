@@ -26,15 +26,6 @@ jobs:
             - /home/circleci/app/api/node_modules
           key: Yarndependencies-{{ checksum "yarn.lock" }}
 
-
-      - run:
-          name: Install Postgres
-          command: sudo apt install -y postgresql-client || true
-
-      - run:
-          name: Install Redis
-          command: sudo apt-get install redis-server || true
-
       - run:
           name: start lint
           command: yarn lint
